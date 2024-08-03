@@ -14,7 +14,7 @@ import LocalMallIcon from '@mui/icons-material/LocalMall';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { Login, Logout, Shop2, Store } from '@mui/icons-material';
 
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Avatar, Badge, Divider, Drawer, ListItemIcon } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { styled } from 'styled-components';
@@ -28,7 +28,8 @@ import { updateCustomer } from '../redux/userHandle';
 const Navbar = () => {
     const { currentUser, currentRole } = useSelector(state => state.user);
 
-    const totalQuantity = currentUser && currentUser.cartDetails && 0;
+    const totalQuantity = currentUser && currentUser.cartDetails ? 
+        currentUser.cartDetails.reduce((total, item) => total + item.quantity, 0) : 0;
 
     const navigate = useNavigate()
     const dispatch = useDispatch();
@@ -38,7 +39,7 @@ const Navbar = () => {
             console.log(currentUser);
             dispatch(updateCustomer(currentUser, currentUser._id));
         }
-    }, [currentRole, currentUser, dispatch, ancorElNav])
+    }, [currentRole, currentUser, dispatch])
 
     const [anchorElNav, setAnchorElNav] = React.useState(null);
     const [anchorElUser, setAnchorElUser] = React.useState(null);
@@ -50,11 +51,11 @@ const Navbar = () => {
     const [isCartOpen, setIsCartOpen] = React.useState(false);
 
     // Cart
-    const handleOpen Cart = () => {
+    const handleOpenCart = () => {
         setIsCartOpen(true);
     };
 
-    const handleOpenCart = () => {
+    const handleCloseCart = () => {
         setIsCartOpen(false);
     };
 
@@ -164,15 +165,16 @@ const Navbar = () => {
                                         horizontal: 'left',
                                     }}
                                     open={Boolean(anchorElNav)}
-                                  
-                                    onClick={handleCloseUserMenu}
+                                    onClose={handleCloseNavMenu}
+                                    onClick={handleCloseNavMenu}
                                     sx={{
                                         display: { xs: 'block', md: 'none' },
                                     }}
                                 >
                                     <MenuItem onClick={() => {
-                                      navigate("/Customerlogin")
-                                     }}>
+                                        navigate("/Customerlogin")
+                                        handleCloseNavMenu()
+                                    }}>
                                         <Typography textAlign="center">Sign in as customer</Typography>
                                     </MenuItem>
                                     <MenuItem onClick={() => {
@@ -247,18 +249,14 @@ const Navbar = () => {
                             >
                                 <MenuItem onClick={() => navigate("/Customerlogin")}>
                                     <Avatar />
-                                    <Link to="/Customerlogin">
-                                        Sign in as customer
-                                    </Link>
+                                    Sign in as customer
                                 </MenuItem>
                                 <Divider />
                                 <MenuItem onClick={() => navigate("/Sellerlogin")}>
                                     <ListItemIcon>
                                         <Store fontSize="small" />
                                     </ListItemIcon>
-                                    <Link to="/Sellerlogin">
-                                        Sign in as seller
-                                    </Link>
+                                    Sign in as seller
                                 </MenuItem>
                             </Menu>
                         </Box>
@@ -304,26 +302,20 @@ const Navbar = () => {
                             >
                                 <MenuItem onClick={() => navigate("/Profile")}>
                                     <Avatar />
-                                    <Link to="/Profile">
-                                        Profile
-                                    </Link>
+                                    Profile
                                 </MenuItem>
                                 <MenuItem onClick={() => navigate("/Orders")}>
                                     <ListItemIcon>
                                         <Shop2 fontSize="small" />
                                     </ListItemIcon>
-                                    <Link to="/Orders">
-                                        My Orders
-                                    </Link>
+                                    My Orders
                                 </MenuItem>
                                 <Divider />
                                 <MenuItem onClick={() => navigate("/Logout")}>
                                     <ListItemIcon>
                                         <Logout fontSize="small" />
                                     </ListItemIcon>
-                                    <Link to="/Logout">
-                                        Logout
-                                    </Link>
+                                    Logout
                                 </MenuItem>
                             </Menu>
                         </Box>
